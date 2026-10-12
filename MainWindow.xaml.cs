@@ -426,7 +426,7 @@ namespace CompSci
                 Headers =
                 {
                     {
-                        "x-rapidapi-key", "acb6abfc5emsh5fc6dfdbbf75c5bp1a226cjsn99be44419645"//unique API key
+                        "x-rapidapi-key", "[insert your key here]"//unique API key
                     },
                     {
                         "x-rapidapi-host", "meteostat.p.rapidapi.com" //API host web address
@@ -459,7 +459,7 @@ namespace CompSci
                 Headers =
                 {
                     {
-                        "x-rapidapi-key", "acb6abfc5emsh5fc6dfdbbf75c5bp1a226cjsn99be44419645"
+                        "x-rapidapi-key", "[insert your key here]"
                     },
                     {
                         "x-rapidapi-host", "uk-postcode-to-latitude-and-longitude.p.rapidapi.com"

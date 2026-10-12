@@ -1,0 +1,151 @@
+# School Assistant
+
+A Windows desktop app that helps new students find their way around school. It uses an **A\* pathfinding algorithm** to plot routes between classrooms, and also handles timetables, lesson reminders, teacher lookup and the weather forecast.
+
+Built in C# / WPF as my A-Level Computer Science NEA project.
+
+---
+
+## Features
+
+### Route finding
+- Shortest route between any two rooms, using **A\*** on a weighted graph of the school's corridors
+- Custom heuristics, **building-based** and **floor-based**, that keep the search away from routes that obviously go the wrong way
+- **Blocked areas:** mark a room as unavailable and the route avoids that corridor
+- Optional **stop** along the way
+- Labelled 2D map images of each building, on their own tabs
+
+### Timetable and reminders
+- Editable timetable grid loaded from the database
+- **Push and pull** your timetable to and from the database
+- **Toast notification 5 minutes before each lesson**, showing which room it's in
+
+### Teacher and room lookup
+- Searchable table of every teacher and their room
+- Filter by teacher initials or room code, with autocomplete dropdowns
+
+### Weather
+- Hourly forecast for the school day (9am to 4pm): temperature, wind speed and precipitation
+- Enter any UK postcode to get the forecast for that location, e.g. for school trips. Falls back to the school's location if the postcode is invalid.
+- API calls are asynchronous, so the UI stays responsive while waiting for a response
+
+### Customisation
+- Change background colours across the app
+- Change notification background and text colours, with a live preview
+
+---
+
+## How it works
+
+### Graph generation
+The school map is stored in a Microsoft Access database (`CorridorConnections` table) rather than hard-coded. When a database is loaded, the app reads each row and builds a graph as a nested dictionary
+
+Edges are bidirectional and weighted by travel time. Because the graph is built at runtime, it can be swapped for any other building just by changing the database.
+
+### A\* algorithm
+Each room is first mapped to its corridor, floor and building with a cross-table SQL query. A\* then runs on the corridor graph:
+
+- `g(n)` is the cost from the start node
+- `h(n)` is a custom heuristic:
+  - same building and same floor as the destination → **1**
+  - same building, different floor → **5**
+  - different building → **10**
+  - blocked corridor → **5000**, so it is never chosen
+- `f(n) = g(n) + h(n)`
+
+The path is rebuilt by backtracking through a `prevNode` dictionary once the destination is reached.
+
+Coordinate-based heuristics like Manhattan or Euclidean distance couldn't be used, given the graph has no absolute coordinate system.
+
+### Database structure
+| Table | Purpose |
+|---|---|
+| `Buildings` | `BuildingID`, `BuildingName` |
+| `CorridorConnections` | `ConnectionID`, `Corridor1`, `Corridor2`, `Distance` |
+| `Corridors` | `CorridorID`, `CorridorName`, `Floor`, `BuildingID` |
+| `Rooms` | `RoomID`, `Corridor` |
+| `TeacherRooms` | `TeacherID`, `Initials`, `RoomID` |
+| `Timetable` | Lesson times and rooms for Monday to Friday |
+
+---
+
+## Tech stack
+
+- **Language:** C#
+- **UI:** WPF (XAML), .NET 6
+- **Database:** Microsoft Access (`.accdb`)
+- **APIs:** [Meteostat](https://rapidapi.com/meteostat/api/meteostat) (weather) and a UK postcode to latitude/longitude API, both via RapidAPI
+- **Libraries:**
+  - [Newtonsoft.Json](https://www.newtonsoft.com/json) for JSON deserialisation
+  - [ToastNotifications](https://github.com/rafallopatka/ToastNotifications) for on-screen notifications
+  - System.Data.OleDb for Access database connectivity
+  - Microsoft Entity Framework Core
+
+---
+
+## Getting started
+
+### Requirements
+- Windows 10 or later (x64 or ARM64)
+- [.NET 6 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/6.0)
+- [Microsoft Access Database Engine](https://www.microsoft.com/en-us/download/details.aspx?id=54920) (the ACE OLEDB 12.0 provider), unless Microsoft Access is already installed
+- 2–4 GB of RAM
+
+### Running the app
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/<your-username>/CompSci.git
+   ```
+2. Open `CompSci.sln` in Visual Studio 2022 or later.
+3. Restore NuGet packages. Visual Studio usually does this automatically.
+4. Add your RapidAPI key (see [API key setup](#api-key-setup)).
+5. Build and run (`F5`).
+6. In the app, click **Select Database File** and choose the `.accdb` database.
+
+> Without a database you can still use the weather and customisation features. Route finding, the timetable and teacher lookup need a database loaded.
+
+### API key setup
+The weather and postcode features need a free [RapidAPI](https://rapidapi.com/) key subscribed to:
+- Meteostat
+- UK Postcode to Latitude and Longitude
+
+Put your key where the code sets the `x-rapidapi-key` header. **Do not commit your real key to GitHub.**
+
+---
+
+## Testing
+
+All objectives were tested and recorded in a demo video:
+**▶ [Testing video on YouTube](https://youtu.be/uINi1IMtFCc)**
+
+| Area | Result |
+|---|---|
+| Graph built from database with weighted edges | ✅ Pass |
+| 2D map images of each building | ✅ Pass |
+| Shortest route calculation | ✅ Pass |
+| Avoiding blocked areas | ✅ Pass |
+| Route returned in under 10 seconds | ✅ Pass |
+| Clear, precise instructions | ✅ Pass |
+| Teacher and room lookup | ✅ Pass |
+| Timetable push/pull to database | ✅ Pass |
+| Lesson notification 5 minutes before | ✅ Pass |
+| UI customisation | ✅ Pass |
+| Hourly weather forecast (9am to 4pm) | ✅ Pass |
+| First aid kits / defibrillators on map | ❌ Not implemented |
+| Multiple alternative routes | ❌ Not implemented |
+
+---
+
+## Known limitations and future improvements
+
+- **Routes are corridor to corridor**, not room to room. In practice the difference is a few seconds.
+- **No alternative routes.** A\* returns one optimal path. Offering different alternatives would need a different approach, such as k-shortest-paths.
+- **Medical equipment isn't mapped.** There are so many first aid points that adding them as nodes would flood the room list.
+- **Stairs aren't modelled.** They are usually at the ends of corridors, and the floor images make level changes clear.
+- Map images are stored in the project, so a different school would need its own images added.
+
+---
+
+## Author
+
+**Aryan J. Patel**, A-Level Computer Science NEA (2024–25)

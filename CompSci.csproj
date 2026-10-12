@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="dropdowns.jpg" />
+    <None Remove="MapPics\biodown.png" />
+    <None Remove="MapPics\BIOUP.png" />
+    <None Remove="MapPics\downstairs.png" />
+    <None Remove="MapPics\downstairs1.png" />
+    <None Remove="MapPics\DTDOWN.png" />
+    <None Remove="MapPics\DTUP.png" />
+    <None Remove="MapPics\everything.png" />
+    <None Remove="MapPics\geog.png" />
+    <None Remove="MapPics\upstairs.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="MapPics\DTDOWN.png" />
+    <Resource Include="MapPics\DTUP.png" />
+    <Resource Include="MapPics\everything.png" />
+    <Resource Include="MapPics\geog.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.20" />
+    <PackageReference Include="Microsoft.Toolkit.Uwp.Notifications" Version="7.1.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="System.Data.OleDb" Version="8.0.0" />
+    <PackageReference Include="ToastNotifications" Version="2.5.1" />
+    <PackageReference Include="ToastNotifications.Messages" Version="2.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="dropdowns.jpg" />
+    <Resource Include="MapPics\biodown.png" />
+    <Resource Include="MapPics\BIOUP.png" />
+    <Resource Include="MapPics\downstairs.png" />
+    <Resource Include="MapPics\downstairs1.png" />
+    <Resource Include="MapPics\upstairs.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
